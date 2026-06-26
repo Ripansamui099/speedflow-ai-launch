@@ -28,6 +28,11 @@ export default defineConfig(async ({ command }) => {
 
   return {
     plugins,
+    server: {
+      watch: {
+        ignored: ["**/src/demo_video/**"],
+      },
+    },
     resolve: {
       alias: {
         "@": `${process.cwd()}/src`,
