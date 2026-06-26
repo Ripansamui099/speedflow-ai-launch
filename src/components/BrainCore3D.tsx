@@ -8,7 +8,6 @@ export function BrainCore3D() {
     const container = containerRef.current;
     if (!container) return;
 
-    // Dimensions
     const width = container.clientWidth;
     const height = container.clientHeight;
 
@@ -17,7 +16,7 @@ export function BrainCore3D() {
 
     // Camera
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.z = 15;
+    camera.position.z = 14;
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -25,60 +24,74 @@ export function BrainCore3D() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Group to hold all objects (for ease of rotation)
-    const brainGroup = new THREE.Group();
-    scene.add(brainGroup);
+    // Main Group
+    const mainGroup = new THREE.Group();
+    scene.add(mainGroup);
 
-    // Color spec tokens
-    const forsythiaColor = new THREE.Color("#ffc801");
-    const saffronColor = new THREE.Color("#ff9932");
+    // Color tokens
+    const forsythia = new THREE.Color("#ffc801");
+    const saffron = new THREE.Color("#ff9932");
+    const powder = new THREE.Color("#f1f6f4");
+    const mint = new THREE.Color("#d9e8e2");
 
-    // 1. Create central core node (glowing mesh sphere)
-    const coreGeometry = new THREE.SphereGeometry(1.2, 16, 16);
-    const coreMaterial = new THREE.MeshBasicMaterial({
-      color: forsythiaColor,
+    // 1. NESTED CORES (Double wireframe sphere core for engine look)
+    const core1Geo = new THREE.SphereGeometry(1.2, 16, 16);
+    const core1Mat = new THREE.MeshBasicMaterial({
+      color: forsythia,
       wireframe: true,
       transparent: true,
-      opacity: 0.15,
+      opacity: 0.12,
     });
-    const coreMesh = new THREE.Mesh(coreGeometry, coreMaterial);
-    brainGroup.add(coreMesh);
+    const core1 = new THREE.Mesh(core1Geo, core1Mat);
+    mainGroup.add(core1);
 
-    // 2. Create neural nodes & connecting lines
-    const nodeCount = 45;
-    const nodeGeometry = new THREE.SphereGeometry(0.08, 8, 8);
-    const nodeMaterial = new THREE.MeshBasicMaterial({ color: forsythiaColor });
+    const core2Geo = new THREE.SphereGeometry(0.8, 12, 12);
+    const core2Mat = new THREE.MeshBasicMaterial({
+      color: saffron,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.2,
+    });
+    const core2 = new THREE.Mesh(core2Geo, core2Mat);
+    mainGroup.add(core2);
+
+    // 2. FIBONACCI NODE NETWORK (Outer node shell)
+    const nodeCount = 50;
+    const nodeGeo = new THREE.SphereGeometry(0.06, 8, 8);
     const nodes: THREE.Mesh[] = [];
     const nodePositions: THREE.Vector3[] = [];
 
-    // Distribute nodes spherically using fibonacci lattice
     for (let i = 0; i < nodeCount; i++) {
       const phi = Math.acos(-1 + (2 * i) / nodeCount);
       const theta = Math.sqrt(nodeCount * Math.PI) * phi;
-      const radius = 3.2 + Math.sin(i * 1.7) * 0.4; // organic slight variance
+      const radius = 2.8 + Math.sin(i * 1.5) * 0.3; // slight spherical wave
 
       const x = radius * Math.sin(phi) * Math.cos(theta);
       const y = radius * Math.sin(phi) * Math.sin(theta);
       const z = radius * Math.cos(phi);
 
-      const nodeMesh = new THREE.Mesh(nodeGeometry, nodeMaterial);
-      nodeMesh.position.set(x, y, z);
-      brainGroup.add(nodeMesh);
-      nodes.push(nodeMesh);
-      nodePositions.push(nodeMesh.position);
+      // Randomize node colors for visual richness (Forsythia, Saffron, Powder)
+      const color = i % 3 === 0 ? forsythia : i % 3 === 1 ? saffron : powder;
+      const nodeMat = new THREE.MeshBasicMaterial({ color });
+      const node = new THREE.Mesh(nodeGeo, nodeMat);
+      node.position.set(x, y, z);
+
+      mainGroup.add(node);
+      nodes.push(node);
+      nodePositions.push(node.position);
     }
 
-    // Connect nodes with line segments based on proximity
-    const lineMaterial = new THREE.LineBasicMaterial({
-      color: saffronColor,
+    // Proximity connections
+    const lineMat = new THREE.LineBasicMaterial({
+      color: saffron,
       transparent: true,
-      opacity: 0.2,
+      opacity: 0.15,
     });
 
     const linePoints: THREE.Vector3[] = [];
     for (let i = 0; i < nodeCount; i++) {
       const posA = nodePositions[i];
-      // Find 2 closest nodes to connect to
+      // Connect to the 2 closest nodes
       const connections = nodePositions
         .map((posB, idx) => ({ idx, dist: posA.distanceTo(posB) }))
         .filter((item) => item.idx !== i)
@@ -91,103 +104,157 @@ export function BrainCore3D() {
       });
     }
 
-    const lineGeometry = new THREE.BufferGeometry().setFromPoints(linePoints);
-    const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
-    brainGroup.add(lines);
+    const lineGeo = new THREE.BufferGeometry().setFromPoints(linePoints);
+    const lines = new THREE.LineSegments(lineGeo, lineMat);
+    mainGroup.add(lines);
 
-    // 3. Orbiting Data Packet Particles
-    const particleCount = 120;
-    const particleGeometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    const randomSpeeds = new Float32Array(particleCount);
-    const randomRadii = new Float32Array(particleCount);
-    const randomOffsets = new Float32Array(particleCount);
+    // 3. SPINNING GYRO RINGS (saturn-like data trails)
+    const ring1Group = new THREE.Group();
+    const ring2Group = new THREE.Group();
+    mainGroup.add(ring1Group);
+    mainGroup.add(ring2Group);
 
-    for (let i = 0; i < particleCount; i++) {
-      randomSpeeds[i] = 0.2 + Math.random() * 0.8;
-      randomRadii[i] = 3.0 + Math.random() * 1.5;
-      randomOffsets[i] = Math.random() * Math.PI * 2;
+    // Tilt the rings
+    ring1Group.rotation.x = Math.PI / 4;
+    ring1Group.rotation.y = Math.PI / 6;
 
-      // Start position
-      positions[i * 3] = 0;
-      positions[i * 3 + 1] = 0;
-      positions[i * 3 + 2] = 0;
+    ring2Group.rotation.x = -Math.PI / 5;
+    ring2Group.rotation.z = Math.PI / 4;
+
+    const createRingParticles = (radius: number, count: number, color: THREE.Color) => {
+      const geo = new THREE.BufferGeometry();
+      const pos = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * Math.PI * 2;
+        pos[i * 3] = Math.cos(angle) * radius;
+        pos[i * 3 + 1] = 0;
+        pos[i * 3 + 2] = Math.sin(angle) * radius;
+      }
+      geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+      const mat = new THREE.PointsMaterial({
+        color,
+        size: 0.08,
+        transparent: true,
+        opacity: 0.6,
+        blending: THREE.AdditiveBlending,
+      });
+      return new THREE.Points(geo, mat);
+    };
+
+    const ring1 = createRingParticles(3.8, 80, forsythia);
+    const ring2 = createRingParticles(4.2, 90, saffron);
+    ring1Group.add(ring1);
+    ring2Group.add(ring2);
+
+    // 4. FREE FLOATING SWARM PARTICLES
+    const swarmCount = 100;
+    const swarmGeo = new THREE.BufferGeometry();
+    const swarmPos = new Float32Array(swarmCount * 3);
+    const swarmSpeeds = new Float32Array(swarmCount);
+    const swarmRadii = new Float32Array(swarmCount);
+    const swarmOffsets = new Float32Array(swarmCount);
+
+    for (let i = 0; i < swarmCount; i++) {
+      swarmSpeeds[i] = 0.3 + Math.random() * 0.7;
+      swarmRadii[i] = 2.5 + Math.random() * 2.0;
+      swarmOffsets[i] = Math.random() * Math.PI * 2;
+
+      swarmPos[i * 3] = 0;
+      swarmPos[i * 3 + 1] = 0;
+      swarmPos[i * 3 + 2] = 0;
     }
+    swarmGeo.setAttribute("position", new THREE.BufferAttribute(swarmPos, 3));
 
-    particleGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    // Multi-colored particles (forsythia, saffron, powder, mint)
+    const swarmColors = new Float32Array(swarmCount * 3);
+    for (let i = 0; i < swarmCount; i++) {
+      const c = i % 4 === 0 ? forsythia : i % 4 === 1 ? saffron : i % 4 === 2 ? powder : mint;
+      swarmColors[i * 3] = c.r;
+      swarmColors[i * 3 + 1] = c.g;
+      swarmColors[i * 3 + 2] = c.b;
+    }
+    swarmGeo.setAttribute("color", new THREE.BufferAttribute(swarmColors, 3));
 
-    // Particle texture / material (glowing circular points)
-    const pMaterial = new THREE.PointsMaterial({
-      color: forsythiaColor,
-      size: 0.12,
+    const swarmMat = new THREE.PointsMaterial({
+      size: 0.1,
+      vertexColors: true,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.7,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
 
-    const particles = new THREE.Points(particleGeometry, pMaterial);
-    brainGroup.add(particles);
+    const swarm = new THREE.Points(swarmGeo, swarmMat);
+    mainGroup.add(swarm);
 
-    // Mouse movement variables
+    // Mouse interactive tilt
     let targetRotationX = 0;
     let targetRotationY = 0;
 
-    const handleMouseMove = (event: MouseEvent) => {
+    const handleMouseMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
-      const x = event.clientX - rect.left - width / 2;
-      const y = event.clientY - rect.top - height / 2;
-      targetRotationY = (x / (width / 2)) * 0.4;
-      targetRotationX = (y / (height / 2)) * 0.4;
+      const x = e.clientX - rect.left - width / 2;
+      const y = e.clientY - rect.top - height / 2;
+      targetRotationY = (x / (width / 2)) * 0.35;
+      targetRotationX = (y / (height / 2)) * 0.35;
     };
-
     window.addEventListener("mousemove", handleMouseMove);
 
-    // Animation variables
+    // Render loop
     let time = 0;
     let reqId: number;
 
     const animate = () => {
       time += 0.01;
 
-      // Smooth mouse rotation response
-      brainGroup.rotation.y += (targetRotationY - brainGroup.rotation.y) * 0.05;
-      brainGroup.rotation.x += (targetRotationX - brainGroup.rotation.x) * 0.05;
+      // Mouse follow rotation
+      mainGroup.rotation.y += (targetRotationY - mainGroup.rotation.y) * 0.05;
+      mainGroup.rotation.x += (targetRotationX - mainGroup.rotation.x) * 0.05;
 
-      // Constant base rotation
-      brainGroup.rotation.y += 0.002;
+      // Constant core spin
+      mainGroup.rotation.y += 0.001;
 
-      // Orbital physics calculation for data particles
-      const posAttr = particleGeometry.getAttribute("position") as THREE.BufferAttribute;
-      const posArray = posAttr.array as Float32Array;
+      // Rotate Saturn rings on their own speeds
+      ring1Group.rotation.y += 0.008;
+      ring2Group.rotation.y -= 0.006;
 
-      for (let i = 0; i < particleCount; i++) {
-        const speed = randomSpeeds[i] * 0.8;
-        const radius = randomRadii[i];
-        const offset = randomOffsets[i];
+      // Spin inner cores in opposite directions
+      core1.rotation.y += 0.004;
+      core1.rotation.x += 0.002;
+      core2.rotation.y -= 0.006;
+      core2.rotation.z += 0.003;
 
-        // Spherical orbital paths
+      // Pulse sizes
+      const pulse1 = 1.0 + Math.sin(time * 2.5) * 0.06;
+      const pulse2 = 1.0 + Math.cos(time * 3.5) * 0.08;
+      core1.scale.set(pulse1, pulse1, pulse1);
+      core2.scale.set(pulse2, pulse2, pulse2);
+
+      // Animate swarm particles
+      const posAttr = swarmGeo.getAttribute("position") as THREE.BufferAttribute;
+      const posArr = posAttr.array as Float32Array;
+
+      for (let i = 0; i < swarmCount; i++) {
+        const speed = swarmSpeeds[i] * 0.6;
+        const radius = swarmRadii[i];
+        const offset = swarmOffsets[i];
+
+        // Orbit paths
         const theta = time * speed + offset;
-        const phi = (i / particleCount) * Math.PI;
+        const phi = (i / swarmCount) * Math.PI;
 
-        posArray[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-        posArray[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-        posArray[i * 3 + 2] = radius * Math.cos(phi);
+        posArr[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+        posArr[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        posArr[i * 3 + 2] = radius * Math.cos(phi);
       }
-      posAttr.needsUpdate = true;
+      posArr.needsUpdate = true;
 
-      // Subtle pulse scale for core nodes
-      const pulse = 1.0 + Math.sin(time * 3) * 0.08;
-      coreMesh.scale.set(pulse, pulse, pulse);
-
-      // Render
       renderer.render(scene, camera);
       reqId = requestAnimationFrame(animate);
     };
 
     animate();
 
-    // Resize Handler
     const handleResize = () => {
       const w = container.clientWidth;
       const h = container.clientHeight;
@@ -195,10 +262,8 @@ export function BrainCore3D() {
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     };
-
     window.addEventListener("resize", handleResize);
 
-    // Clean up
     return () => {
       cancelAnimationFrame(reqId);
       window.removeEventListener("mousemove", handleMouseMove);
@@ -206,28 +271,22 @@ export function BrainCore3D() {
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
-      coreGeometry.dispose();
-      coreMaterial.dispose();
-      nodeGeometry.dispose();
-      nodeMaterial.dispose();
-      lineGeometry.dispose();
-      lineMaterial.dispose();
-      particleGeometry.dispose();
-      pMaterial.dispose();
+      core1Geo.dispose();
+      core1Mat.dispose();
+      core2Geo.dispose();
+      core2Mat.dispose();
+      nodeGeo.dispose();
+      lineGeo.dispose();
+      lineMat.dispose();
+      swarmGeo.dispose();
+      swarmMat.dispose();
+      ring1.geometry.dispose();
+      (ring1.material as THREE.Material).dispose();
+      ring2.geometry.dispose();
+      (ring2.material as THREE.Material).dispose();
       renderer.dispose();
     };
   }, []);
 
-  return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      {/* Decorative radar/ping rings in CSS background for depth */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
-        <div className="absolute w-[280px] h-[280px] rounded-full border border-[var(--forsythia)] animate-[ping_8s_infinite]" />
-        <div className="absolute w-[180px] h-[180px] rounded-full border border-[var(--saffron)] animate-[ping_12s_infinite]" />
-        <div className="absolute w-[80px] h-[80px] rounded-full border border-[var(--forsythia)] animate-[ping_16s_infinite]" />
-      </div>
-
-      <div ref={containerRef} className="w-full h-full min-h-[380px]" />
-    </div>
-  );
+  return <div ref={containerRef} className="w-full h-full" />;
 }

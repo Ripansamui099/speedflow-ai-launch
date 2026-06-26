@@ -1,7 +1,25 @@
+import { useEffect, useState } from "react";
 import { DataPlane3D } from "./DataPlane3D";
 import { BrainCore3D } from "./BrainCore3D";
 
 export function Hero() {
+  const [telemetry, setTelemetry] = useState({
+    throughput: 12488,
+    latency: 12,
+    cognition: 98.4,
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTelemetry({
+        throughput: Math.floor(12400 + Math.random() * 180),
+        latency: Math.floor(10 + Math.random() * 4),
+        cognition: parseFloat((98.2 + Math.random() * 0.4).toFixed(1)),
+      });
+    }, 1500);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="relative overflow-hidden px-6 pt-32 pb-24 md:pt-44 md:pb-32 grid-noise">
       {/* Backdrop 3D data plane mesh & glow */}
@@ -70,9 +88,49 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Interactive 3D WebGL Neural Network Brain Core */}
-          <div className="rise rise-3 lg:col-span-5 h-[380px] md:h-[450px] relative w-full flex items-center justify-center">
-            <BrainCore3D />
+          {/* Interactive 3D WebGL Neural Network Brain Core Dashboard */}
+          <div className="rise rise-3 lg:col-span-5 relative w-full flex items-center justify-center">
+            <div className="w-full rounded-3xl border border-border bg-[color-mix(in_oklab,var(--card)_30%,transparent)] backdrop-blur-lg p-5 shadow-2xl ring-soft overflow-hidden">
+              {/* Card Header with Mock HUD controls */}
+              <div className="flex items-center justify-between mb-4 border-b border-border/40 pb-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-red-500/80" />
+                  <span className="h-2 w-2 rounded-full bg-yellow-500/80" />
+                  <span className="h-2 w-2 rounded-full bg-green-500/80" />
+                </div>
+                <span className="font-display text-[10px] uppercase tracking-wider text-[var(--forsythia)] font-bold">
+                  CORE_BRAIN // MODEL_3D
+                </span>
+              </div>
+
+              {/* The Three.js canvas container */}
+              <div className="h-[300px] md:h-[350px] relative w-full">
+                <BrainCore3D />
+              </div>
+
+              {/* Card Footer with Live dynamic telemetry */}
+              <div className="mt-4 border-t border-border/40 pt-4 grid grid-cols-3 gap-2 font-display text-[9px] uppercase tracking-wider text-[var(--muted-foreground)]">
+                <div>
+                  <div className="opacity-60">Status</div>
+                  <div className="mt-1 font-bold text-emerald-400 flex items-center gap-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    ONLINE
+                  </div>
+                </div>
+                <div>
+                  <div className="opacity-60">Cognition</div>
+                  <div className="mt-1 font-bold text-[var(--foreground)]">
+                    {telemetry.cognition}%
+                  </div>
+                </div>
+                <div>
+                  <div className="opacity-60">Avg Latency</div>
+                  <div className="mt-1 font-bold text-[var(--forsythia)]">
+                    {telemetry.latency}ms
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

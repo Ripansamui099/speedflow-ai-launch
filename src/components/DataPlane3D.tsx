@@ -187,7 +187,7 @@ export function DataPlane3D() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 h-full w-full opacity-60 pointer-events-none"
+      className="absolute inset-0 h-full w-full opacity-[0.18] pointer-events-none"
       style={{ mixBlendMode: "screen" }}
     />
   );
