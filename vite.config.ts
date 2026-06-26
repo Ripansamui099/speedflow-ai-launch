@@ -1,10 +1,10 @@
-import { defineConfig } from "vite";
+import { defineConfig, type ConfigEnv, type UserConfigExport } from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig(async ({ command }) => {
+export default defineConfig((async ({ command }: ConfigEnv) => {
   const plugins = [
     tailwindcss(),
     tsConfigPaths({ projects: ["./tsconfig.json"] }),
@@ -58,4 +58,4 @@ export default defineConfig(async ({ command }) => {
       ignoreOutdatedRequests: true,
     },
   };
-});
+}) as UserConfigExport);
