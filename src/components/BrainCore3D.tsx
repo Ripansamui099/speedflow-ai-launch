@@ -247,7 +247,7 @@ export function BrainCore3D() {
         posArr[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
         posArr[i * 3 + 2] = radius * Math.cos(phi);
       }
-      posArr.needsUpdate = true;
+      posAttr.needsUpdate = true;
 
       renderer.render(scene, camera);
       reqId = requestAnimationFrame(animate);
