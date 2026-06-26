@@ -1,4 +1,5 @@
 import { DataPlane3D } from "./DataPlane3D";
+import { BrainCore3D } from "./BrainCore3D";
 
 export function Hero() {
   return (
@@ -17,56 +18,66 @@ export function Hero() {
       </div>
 
       <div className="mx-auto max-w-6xl">
-        <div className="rise rise-1 inline-flex items-center gap-2 rounded-full border border-border bg-[var(--card)] px-3 py-1.5 text-xs font-display">
-          <span className="grid place-items-center h-1.5 w-1.5 rounded-full bg-[var(--forsythia)] animate-[pulseDot_2s_infinite]" />
-          <span className="uppercase tracking-wider">v4.0 — Edge runtime now GA</span>
-        </div>
+        <div className="grid lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-7 flex flex-col justify-center">
+            <div className="rise rise-1 inline-flex items-center gap-2 rounded-full border border-border bg-[var(--card)] px-3 py-1.5 text-xs font-display w-fit">
+              <span className="grid place-items-center h-1.5 w-1.5 rounded-full bg-[var(--forsythia)] animate-[pulseDot_2s_infinite]" />
+              <span className="uppercase tracking-wider">v4.0 — Edge runtime now GA</span>
+            </div>
 
-        <h1 className="rise rise-2 mt-6 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95] max-w-5xl">
-          The data plane <span className="text-[var(--forsythia)]">that thinks</span> before it
-          ships.
-        </h1>
+            <h1 className="rise rise-2 mt-6 font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] max-w-5xl">
+              The data plane <span className="text-[var(--forsythia)]">that thinks</span> before it
+              ships.
+            </h1>
 
-        <p className="rise rise-3 mt-7 max-w-2xl text-lg text-[var(--muted-foreground)] leading-relaxed">
-          Mesh is an AI-native automation platform that ingests, reasons over, and routes your data
-          with sub-100ms decisions — without a single line of orchestration code.
-        </p>
+            <p className="rise rise-3 mt-7 max-w-2xl text-base md:text-lg text-[var(--muted-foreground)] leading-relaxed">
+              Mesh is an AI-native automation platform that ingests, reasons over, and routes your
+              data with sub-100ms decisions — without a single line of orchestration code.
+            </p>
 
-        <div className="rise rise-4 mt-10 flex flex-wrap items-center gap-4">
-          <a
-            href="#pricing"
-            className="group inline-flex items-center gap-2 rounded-full bg-[var(--forsythia)] px-6 py-3.5 font-display text-sm font-bold uppercase tracking-wider text-[var(--noir)] hover-lift hover:bg-[var(--saffron)]"
-          >
-            Deploy free tier
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="transition-transform duration-150 group-hover:translate-x-0.5"
-            >
-              <path
-                d="m8.25 4.5l7.5 7.5l-7.5 7.5"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </a>
-          <a
-            href="#features"
-            className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3.5 font-display text-sm font-medium uppercase tracking-wider hover:border-[var(--forsythia)] hover:text-[var(--forsythia)] transition-colors duration-150"
-          >
-            See architecture
-          </a>
-          <span className="text-xs text-[var(--muted-foreground)]">
-            No card · 10k free events · Cancel anytime
-          </span>
+            <div className="rise rise-4 mt-10 flex flex-wrap items-center gap-4">
+              <a
+                href="#pricing"
+                className="group inline-flex items-center gap-2 rounded-full bg-[var(--forsythia)] px-6 py-3.5 font-display text-sm font-bold uppercase tracking-wider text-[var(--noir)] hover-lift hover:bg-[var(--saffron)]"
+              >
+                Deploy free tier
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="transition-transform duration-150 group-hover:translate-x-0.5"
+                >
+                  <path
+                    d="m8.25 4.5l7.5 7.5l-7.5 7.5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
+              <a
+                href="#features"
+                className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3.5 font-display text-sm font-medium uppercase tracking-wider hover:border-[var(--forsythia)] hover:text-[var(--forsythia)] transition-colors duration-150"
+              >
+                See architecture
+              </a>
+            </div>
+
+            <div className="rise rise-4 mt-3 text-xs text-[var(--muted-foreground)]">
+              No card · 10k free events · Cancel anytime
+            </div>
+          </div>
+
+          {/* Interactive 3D WebGL Neural Network Brain Core */}
+          <div className="rise rise-3 lg:col-span-5 h-[380px] md:h-[450px] relative w-full flex items-center justify-center">
+            <BrainCore3D />
+          </div>
         </div>
 
         {/* Schematic card */}
-        <div className="rise rise-4 mt-20 relative rounded-3xl border border-border bg-[var(--card)] p-2 ring-soft">
+        <div className="rise rise-4 mt-16 relative rounded-3xl border border-border bg-[var(--card)] p-2 ring-soft">
           <div className="rounded-2xl border border-border bg-[var(--noir)] p-6 md:p-10 overflow-hidden">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
