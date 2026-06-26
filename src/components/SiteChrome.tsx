@@ -1,4 +1,4 @@
-export function SiteHeader() {
+export function SiteHeader({ onSignInClick }: { onSignInClick?: () => void }) {
   return (
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-[color-mix(in_oklab,var(--noir)_80%,transparent)] border-b border-border">
       <nav
@@ -50,12 +50,12 @@ export function SiteHeader() {
             ⌘K
           </kbd>
         </div>
-        <a
-          href="#pricing"
-          className="rounded-full bg-[var(--forsythia)] px-4 py-2 text-xs font-display font-bold uppercase tracking-wider text-[var(--noir)] hover:bg-[var(--saffron)] transition-colors duration-150"
+        <button
+          onClick={onSignInClick}
+          className="rounded-full bg-[var(--forsythia)] px-4 py-2 text-xs font-display font-bold uppercase tracking-wider text-[var(--noir)] hover:bg-[var(--saffron)] transition-colors duration-150 cursor-pointer"
         >
           Sign in
-        </a>
+        </button>
       </nav>
     </header>
   );

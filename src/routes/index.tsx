@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Hero } from "@/components/Hero";
 import { BentoFeatures } from "@/components/BentoFeatures";
 import { Pricing } from "@/components/Pricing";
 import { SocialProof } from "@/components/SocialProof";
+import { SignInModal } from "@/components/SignInModal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -53,10 +55,12 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
+
   return (
     <>
       <span className="loader-bar" aria-hidden />
-      <SiteHeader />
+      <SiteHeader onSignInClick={() => setIsSignInOpen(true)} />
       <main>
         <Hero />
         <BentoFeatures />
@@ -64,6 +68,7 @@ function Index() {
         <SocialProof />
       </main>
       <SiteFooter />
+      <SignInModal isOpen={isSignInOpen} onClose={() => setIsSignInOpen(false)} />
     </>
   );
 }

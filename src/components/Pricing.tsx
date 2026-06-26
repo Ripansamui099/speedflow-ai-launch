@@ -226,7 +226,7 @@ export function Pricing() {
           {TIERS.map((tier, i) => (
             <article
               key={tier.id}
-              className={`rise rise-${i + 2} group relative rounded-2xl border p-7 hover-lift ring-soft ${
+              className={`rise rise-${i + 2} group relative flex flex-col rounded-2xl border p-7 hover-lift ring-soft ${
                 tier.featured
                   ? "border-[var(--forsythia)] bg-gradient-to-b from-[var(--nocturnal)] to-[var(--card)]"
                   : "border-border bg-[var(--card)]"
@@ -237,51 +237,53 @@ export function Pricing() {
                   Most picked
                 </span>
               )}
-              <h3 className="font-display text-xl font-bold">{tier.name}</h3>
-              <p className="mt-2 text-sm text-[var(--muted-foreground)] min-h-[2.5rem]">
-                {tier.blurb}
-              </p>
-              <div className="mt-6 flex items-baseline gap-1">
-                <span
-                  ref={(el) => {
-                    priceRefs.current[tier.id] = el;
-                  }}
-                  className="font-display text-5xl font-bold tracking-tight tabular-nums"
-                  aria-live="polite"
-                >
-                  {format(compute(tier.base, "USD", "monthly"), "USD")}
-                </span>
-                <span
-                  ref={(el) => {
-                    suffixRefs.current[tier.id] = el;
-                  }}
-                  className="text-sm text-[var(--muted-foreground)]"
-                >
-                  /month
-                </span>
+              <div className="flex-1 flex flex-col">
+                <h3 className="font-display text-xl font-bold">{tier.name}</h3>
+                <p className="mt-2 text-sm text-[var(--muted-foreground)] min-h-[2.5rem]">
+                  {tier.blurb}
+                </p>
+                <div className="mt-6 flex items-baseline gap-1">
+                  <span
+                    ref={(el) => {
+                      priceRefs.current[tier.id] = el;
+                    }}
+                    className="font-display text-5xl font-bold tracking-tight tabular-nums"
+                    aria-live="polite"
+                  >
+                    {format(compute(tier.base, "USD", "monthly"), "USD")}
+                  </span>
+                  <span
+                    ref={(el) => {
+                      suffixRefs.current[tier.id] = el;
+                    }}
+                    className="text-sm text-[var(--muted-foreground)]"
+                  >
+                    /month
+                  </span>
+                </div>
+                <ul className="mt-7 space-y-3 text-sm">
+                  {tier.features.map((f) => (
+                    <li key={f} className="flex gap-3">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        className="mt-0.5 shrink-0 text-[var(--forsythia)]"
+                        fill="none"
+                      >
+                        <path
+                          d="M3 8.5L6.5 12L13 4.5"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className="mt-7 space-y-3 text-sm">
-                {tier.features.map((f) => (
-                  <li key={f} className="flex gap-3">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      className="mt-0.5 shrink-0 text-[var(--forsythia)]"
-                      fill="none"
-                    >
-                      <path
-                        d="M3 8.5L6.5 12L13 4.5"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
               <button
                 className={`mt-8 w-full flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-display font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer ${
                   tier.featured
