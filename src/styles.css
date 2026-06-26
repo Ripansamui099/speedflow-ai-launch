@@ -59,6 +59,32 @@
   --accent-foreground: var(--noir);
   --border: rgba(241, 246, 244, 0.08);
   --ring: var(--forsythia);
+
+  --grid-line: rgba(241, 246, 244, 0.04);
+  --ring-shadow-border: rgba(241, 246, 244, 0.06);
+  --ring-shadow-ambient: rgba(0, 0, 0, 0.6);
+}
+
+.light {
+  /* Semantic mapping (light mode using the EXACT SAME brand palette colors) */
+  --background: var(--powder);
+  --foreground: var(--noir);
+  --card: var(--mint);
+  --card-foreground: var(--noir);
+  --primary: var(--nocturnal);
+  --primary-foreground: var(--powder);
+  --secondary: var(--mint);
+  --secondary-foreground: var(--noir);
+  --muted: rgba(23, 43, 54, 0.08);
+  --muted-foreground: rgba(23, 43, 54, 0.6);
+  --accent: var(--saffron);
+  --accent-foreground: var(--noir);
+  --border: rgba(23, 43, 54, 0.15);
+  --ring: var(--nocturnal);
+
+  --grid-line: rgba(23, 43, 54, 0.05);
+  --ring-shadow-border: rgba(23, 43, 54, 0.08);
+  --ring-shadow-ambient: rgba(23, 43, 54, 0.15);
 }
 
 @layer base {
@@ -71,6 +97,10 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    transition:
+      background-color 200ms ease-out,
+      color 200ms ease-out,
+      border-color 200ms ease-out;
   }
   h1,
   h2,
@@ -166,15 +196,15 @@
 
 @utility grid-noise {
   background-image:
-    linear-gradient(to right, rgba(241, 246, 244, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(241, 246, 244, 0.04) 1px, transparent 1px);
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 
 @utility ring-soft {
   box-shadow:
-    0 0 0 1px rgba(241, 246, 244, 0.06),
-    0 20px 60px -20px rgba(0, 0, 0, 0.6);
+    0 0 0 1px var(--ring-shadow-border),
+    0 20px 60px -20px var(--ring-shadow-ambient);
 }
 
 /* Hardware-accelerated hover */

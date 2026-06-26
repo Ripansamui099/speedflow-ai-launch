@@ -1,4 +1,24 @@
+import { useEffect, useState } from "react";
+
 export function SiteHeader({ onSignInClick }: { onSignInClick?: () => void }) {
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  useEffect(() => {
+    const isLight = document.documentElement.classList.contains("light");
+    setTheme(isLight ? "light" : "dark");
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+    localStorage.setItem("theme", nextTheme);
+    if (nextTheme === "light") {
+      document.documentElement.classList.add("light");
+    } else {
+      document.documentElement.classList.remove("light");
+    }
+  };
+
   return (
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-[color-mix(in_oklab,var(--noir)_80%,transparent)] border-b border-border">
       <nav
@@ -50,12 +70,52 @@ export function SiteHeader({ onSignInClick }: { onSignInClick?: () => void }) {
             ⌘K
           </kbd>
         </div>
-        <button
-          onClick={onSignInClick}
-          className="rounded-full bg-[var(--forsythia)] px-4 py-2 text-xs font-display font-bold uppercase tracking-wider text-[var(--noir)] hover:bg-[var(--saffron)] transition-colors duration-150 cursor-pointer"
-        >
-          Sign in
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={toggleTheme}
+            className="grid h-8 w-8 place-items-center rounded-full border border-border bg-[var(--noir)] text-[var(--muted-foreground)] hover:border-[var(--forsythia)] hover:text-[var(--foreground)] transition-colors duration-150 cursor-pointer"
+            aria-label="Toggle visual theme"
+          >
+            {theme === "dark" ? (
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="12" cy="12" r="4" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            ) : (
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </button>
+          <button
+            onClick={onSignInClick}
+            className="rounded-full bg-[var(--forsythia)] px-4 py-2 text-xs font-display font-bold uppercase tracking-wider text-[var(--noir)] hover:bg-[var(--saffron)] transition-colors duration-150 cursor-pointer"
+          >
+            Sign in
+          </button>
+        </div>
       </nav>
     </header>
   );
